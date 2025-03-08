@@ -1,54 +1,88 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Getting Started
 
-Currently, two official plugins are available:
+First, run the development server:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+</br>
+</br>
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+## Mock Data Guide
+
+
+### Tech List
+- react-query
+- axios
+
+### Guide
+1. Add `.env` file, content should be same as testing environment, usually `sit`.
+2. In `utils/mock-data-utils.ts`, add `isLocal` `delay` `getMockRes`.
+    ```Typescript
+    import { BaseResponse } from '@/libs/fetcher/fetcher';
+
+    const env = process.env.NODE_ENV;
+
+    export const isLocal = false;
+    // export const isLocal = env === 'development'; 
+
+    export const delay = (time = 1) => {
+    return new Promise((res) => {
+        setTimeout(res, time * 1000);
+    });
+    };
+
+    /**
+    *
+    * @param mockData
+    * @param time second, default = 1
+    * @returns
+    */
+    export const getMockRes = async <T>(url: string, mockData: BaseResponse<T>, time = 1): Promise<BaseResponse<T>> => {
+    await delay(time);
+    return new Promise((res) => {
+        console.log(`\x1b[1;36m[mock endpoint]:\x1b[1;36m`, url);
+        console.log(`\x1b[1;91m[mock response]:\x1b[1;91m`, mockData.data);
+        res(mockData);
+    });
+    };
+
+3. Add corresponded api mock-data in `service/food/mock-data.ts` 
+
+4. In `service/food/index.tsx`, implement `isLocal` flag and `mock-data`. Now you can simply switch `isLocal` flag to get mock-data and fetch real apis!!
+
+    ```Typescript
+    import { getMockRes, isLocal } from '@/app/utils/mock-data-utils';
+
+    /** Original Method */
+    // export const getFood: QueryFunction<GetFoodItemResponse | null, [QueryKey.FOOD, GetFoodItemRequest]> = async ({
+    //   queryKey,
+    // }) => {
+    //   const [, params] = queryKey;
+    //   const endpoint = `/food`;
+    //   const response = await fetcher(endpoint, {
+    //     mode: 'get',
+    //     params: generateParams(params),
+    //   });
+
+    //   return response.data;
+    // };
+
+    /** New Method: add isLocal flag and mock-data */
+    export const getFood: QueryFunction<GetFoodItemResponse | null, [QueryKey.FOOD, GetFoodItemRequest]> = async ({
+    queryKey,
+    }) => {
+    const [, params] = queryKey;
+    const endpoint = `/food`;
+    const response = isLocal
+        ? await getMockRes(endpoint, mockFoodItemsResponse)
+        : await fetcher(endpoint, {
+            mode: 'get',
+            params: generateParams(params),
+        });
+
+    return response.data;
+    };
