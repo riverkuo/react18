@@ -19,9 +19,14 @@ export const delay = (time = 1) => {
  */
 export const getMockRes = async <T>(url: string, mockData: BaseResponse<T>, time = 1): Promise<BaseResponse<T>> => {
   await delay(time);
-  return new Promise((res) => {
+  return new Promise((res, rej) => {
     console.log(`\x1b[1;36m[mock endpoint]:\x1b[1;36m`, url);
     console.log(`\x1b[1;91m[mock response]:\x1b[1;91m`, mockData.data);
-    res(mockData);
+
+    if (mockData.error) {
+      rej(mockData);
+    } else {
+      res(mockData);
+    }
   });
 };
