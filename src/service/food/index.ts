@@ -31,7 +31,7 @@ import {
 //   return response.data;
 // };
 
-/** New Method: add isLocal flag and mock-data */
+/** My solution: add isLocal flag and mock-data */
 export const getFood: QueryFunction<GetFoodItemResponse | null, [QueryKey.FOOD, GetFoodItemRequest]> = async ({
   queryKey,
 }) => {
