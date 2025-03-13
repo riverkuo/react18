@@ -1,3 +1,9 @@
+# TODO-river
+5. unit test
+6. msw pros and cons
+
+## Guide
+This is a guide for how to use mock-data in a react project.
 
 ## Getting Started
 
@@ -6,21 +12,26 @@ First, run the development server:
 ```bash
 npm run dev
 ```
-
-
-</br>
 </br>
 
-## Mock Data Guide
+Second, install packages
+1. axios
+2. tanstack-query
+3. msw(optional)
 
+</br>
 
-### Tech List
-- react-query
-- axios
+## Table of Contents
+1. [My Solution](#my-solution)
+2. [MSW](#msw)
+3. [Mock-data Pros & Cons](#mock-data-pros-and-cons)
 
-### Guide
+</br>
+
+### My Solution
+---
 1. Add `.env` file, content should be same as testing environment, usually `sit`.
-2. In `utils/mock-data-utils.ts`, add `isLocal` `delay` `getMockRes`.
+2. In `utils/mock-data-utils.ts`, add `isLocal`, `delay`, `getMockRes`.
     ```Typescript
     import { BaseResponse } from '@/libs/fetcher/fetcher';
 
@@ -46,7 +57,12 @@ npm run dev
     return new Promise((res) => {
         console.log(`\x1b[1;36m[mock endpoint]:\x1b[1;36m`, url);
         console.log(`\x1b[1;91m[mock response]:\x1b[1;91m`, mockData.data);
-        res(mockData);
+
+        if (mockData.error) {
+            rej(mockData); // 若 error 為 true，則回傳 mockData
+        } else {
+            res(mockData); 
+        }
     });
     };
 
@@ -86,3 +102,43 @@ npm run dev
 
     return response.data;
     };
+
+
+</br>
+
+### MSW
+---
+:link: https://mswjs.io/
+
+> MSW (Mock Service Worker) is an API mocking library that allows you to write client-agnostic mocks and reuse them across any frameworks, tools, and environments.
+
+1. Install package -> ```npm install msw@latest --save-dev```
+2. Auto generate mock server worker -> ```npx msw init ./public --save``` 
+3. In `service/food` folder, create `msw` folder, and add `handler.ts` file. Add mock-data, coresponded apis in `handler.ts` file
+4. Create `msw` folder in `libs` folder, and  `woker.ts` file to import all handlers and set global handlers.
+5. In `main.tsx`, add `enableMocking` function, and start mock server worker when `isLocal` is true.
+6. Now you can simply switch `isLocal` flag to get mock-data and fetch real apis!!
+
+
+
+
+
+</br>
+
+### Mock-data Pros & Cons
+---
+
+#### Pros
+1. 跟後端分離：若是後端壞掉的時候，前端仍然可以繼續開發
+2. 輕鬆修改 mock-data 內容（如：error 狀態），藉由 mock-data 的回傳內容進行除錯
+3. 方便對元件進行測試
+
+#### Cons
+1. 需要額外時間寫（不過現在可以叫 AI 工具產生，很方便）
+2. 若是 mock-data 之間有相依性，需要花時間設定
+3. 小心不要把 isLocal = true 推上 production
+
+
+
+
+
