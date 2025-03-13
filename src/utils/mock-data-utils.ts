@@ -1,5 +1,4 @@
 import { BaseResponse } from '@/libs/fetcher/fetcher';
-import { error } from 'console';
 
 const env = process.env.NODE_ENV;
 
