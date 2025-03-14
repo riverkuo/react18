@@ -2,6 +2,16 @@
 5. unit test
 6. msw pros and cons
 
+## Table of Contents
+- [Guide](#guide)
+- [Getting Started](#getting-started)
+- [A. My Solution](#a-my-solution)
+- [B. MSW](#b-msw)
+    - [Implement MSW](#implement-msw)
+    - [MSW with Vitest](#msw-with-vitest)
+    - [Pros & Cons](#pros-and-cons)
+- [Mock-data Pros & Cons](#mock-data-pros-and-cons)
+
 ## Guide
 This is a guide for how to use mock-data in a react project.
 
@@ -15,21 +25,22 @@ npm run dev
 </br>
 
 Second, install packages
-1. axios
-2. tanstack-query
-3. msw(optional)
+- axios
+- tanstack-query
+
+- (msw)
+- (for testing)
+    - @testing-library/jest-dom
+    - @testing-library/react
+    - jsdom
+    - vitest
+
+
 
 </br>
 
-## Table of Contents
-1. [My Solution](#my-solution)
-2. [MSW](#msw)
-3. [Mock-data Pros & Cons](#mock-data-pros-and-cons)
+## A. My Solution
 
-</br>
-
-### My Solution
----
 1. Add `.env` file, content should be same as testing environment, usually `sit`.
 2. In `utils/mock-data-utils.ts`, add `isLocal`, `delay`, `getMockRes`.
     ```Typescript
@@ -103,37 +114,88 @@ Second, install packages
     return response.data;
     };
 
+</br>
+</br>
+
+## B. MSW
+
+:link: https://mswjs.io/
+
+> [!NOTE]  
+> MSW (Mock Service Worker) is an API mocking library that allows you to write client-agnostic mocks and reuse them across any frameworks, tools, and environments.
 
 </br>
 
-### MSW
----
-:link: https://mswjs.io/
-
-> MSW (Mock Service Worker) is an API mocking library that allows you to write client-agnostic mocks and reuse them across any frameworks, tools, and environments.
+### Implement MSW
 
 1. Install package -> ```npm install msw@latest --save-dev```
 2. Auto generate mock server worker -> ```npx msw init ./public --save``` 
-3. In `service/food` folder, create `msw` folder, and add `handler.ts` file. Add mock-data, coresponded apis in `handler.ts` file
+3. Create `msw` folder in service, and add `handler.ts` file. Add mock-data, coresponded apis in `handler.ts` file
 4. Create `msw` folder in `libs` folder, and  `woker.ts` file to import all handlers and set global handlers.
 5. In `main.tsx`, add `enableMocking` function, and start mock server worker when `isLocal` is true.
+
+    ```Typescript
+    async function enableMocking() {
+       // if in production, do not enable mocking
+       if (!isLocal) return;
+
+       const { worker } = await import('./libs/msw/woker.ts');
+
+       return worker.start();
+    }
+
+
+
+    enableMocking().then(() => {
+    createRoot(document.getElementById('root')!).render(
+        <StrictMode>
+        <App />
+        </StrictMode>
+    );
+    });
+    ```
 6. Now you can simply switch `isLocal` flag to get mock-data and fetch real apis!!
+
+
+</br>
+
+### MSW with Vitest
+
+1. Install testing related packages
+2. Create `server.ts` in `msw/libs` to import all handlers and set global handlers.
+3. Create `setupTests.ts` in `tests` folder, import module and start mock server worker.
+4. Modify `tsconfig.app.json` to include `setupTests.ts`, add `test` config in `vite.config.ts`. Add npm script for testing.
+5. Add `home.test.tsx`.
+6. Run `npm run test` to see the result.
+
+</br>
+
+### Pros & Cons
+
+#### Pros
+1. 方便 mock api 的回傳資料、狀態、header、cookie 等
+2. 可以根據不同的 request(query string, body...) 回傳相對應假資料
+
+#### Cons
+1. 學習成本
+2. 若是沒有要測試、或是設定複雜型態的回傳資料，就不太需要用到
 
 
 
 
 
 </br>
+</br>
 
-### Mock-data Pros & Cons
----
+## Mock-data Pros & Cons
 
-#### Pros
+
+### Pros
 1. 跟後端分離：若是後端壞掉的時候，前端仍然可以繼續開發
 2. 輕鬆修改 mock-data 內容（如：error 狀態），藉由 mock-data 的回傳內容進行除錯
 3. 方便對元件進行測試
 
-#### Cons
+### Cons
 1. 需要額外時間寫（不過現在可以叫 AI 工具產生，很方便）
 2. 若是 mock-data 之間有相依性，需要花時間設定
 3. 小心不要把 isLocal = true 推上 production
