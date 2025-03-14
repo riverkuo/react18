@@ -27,8 +27,9 @@
     "types": ["node"],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
+      "@/*": ["src/*"],
     },  
   },
-  "include": ["src"]
+  "include": ["src"],
+  "files": ["./src/tests/setupTests.ts"]
 }

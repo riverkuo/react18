@@ -12,9 +12,7 @@ createRoot(document.getElementById('root')!).render(
 
 // async function enableMocking() {
 //   // if in production, do not enable mocking
-//   if (!isLocal) {
-//     return;
-//   }
+//   if (!isLocal) return;
 
 //   const { worker } = await import('./libs/msw/woker.ts');
 

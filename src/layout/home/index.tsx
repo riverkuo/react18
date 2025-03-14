@@ -155,7 +155,7 @@ function TableRow({ food }: { food: FoodItem }) {
         <button disabled={disabled} onClick={onEdit}>
           {editMode ? 'submit' : 'edit'}
         </button>
-        <button disabled={disabled && editMode} onClick={onDeleteFood}>
+        <button disabled={disabled || editMode} onClick={onDeleteFood}>
           delete
         </button>
       </td>
