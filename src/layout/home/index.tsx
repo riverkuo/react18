@@ -75,7 +75,7 @@ export function Home() {
 }
 
 function DataTable({ foodListData }: { foodListData: GetFoodItemResponse | null | undefined }) {
-  return foodListData ? (
+  return foodListData && foodListData.length > 0 ? (
     <table>
       <tbody>
         <TableHeads />
