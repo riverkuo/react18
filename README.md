@@ -1,7 +1,3 @@
-# TODO-river
-5. unit test
-6. msw pros and cons
-
 ## Table of Contents
 - [Guide](#guide)
 - [Getting Started](#getting-started)
