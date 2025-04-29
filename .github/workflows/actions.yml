@@ -23,6 +23,7 @@ jobs:
           host: ${{ secrets.NGINX_HOST }}
           username: ${{ secrets.NGINX_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
           source: "dist/**"
           target: "/var/www/html/riverdevv.com/test-react-app"
 
