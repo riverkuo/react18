@@ -24,7 +24,7 @@ jobs:
           username: ${{ secrets.NGINX_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          source: "dist/**"
+          source: "dist/*"
           target: "/var/www/html/riverdevv.com/test-react-app"
 
       - name: Reload Nginx
