@@ -46,7 +46,7 @@ jobs:
           USER_NAME: ${{ github.actor }}
           BRANCH: ${{ github.ref_name }}
           ENVIRONMENT: ${{ github.event.deployment.environment || 'unknown' }}
-          SHORT_SHA: ${{ github.sha }}
+          SHORT_SHA: ${{ GITHUB_SHA }}
           FAILED_JOB: ${{ github.job }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -54,7 +54,7 @@ jobs:
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}
           COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
         run: |
-          SHORT_SHA=${SHORT_SHA:0:7}
+          SHORT_SHA=${GITHUB_SHA:0:7}
           if [ "${{ job.status }}" = "success" ]; then
             curl -H "Content-Type: application/json" \
               -X POST \
