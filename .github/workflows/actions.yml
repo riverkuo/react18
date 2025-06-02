@@ -48,11 +48,12 @@ jobs:
           ENVIRONMENT: ${{ github.event.deployment.environment || 'unknown' }}
           SHORT_SHA: ${{ github.sha }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           SHORT_SHA=${SHORT_SHA:0:7}
           curl -H "Content-Type: application/json" \
             -X POST \
-            -d "{\"content\": \"✅ **部署成功！**\n- Repo: ${REPO_NAME}\n- User: ${USER_NAME}\n- Branch: ${BRANCH}\n- Environment: ${ENVIRONMENT}\n- Commit: ${SHORT_SHA}\"}" \
+            -d "{\"embeds\": [{\"title\": \"✅ Deploy Succeeded\", \"color\": 65280, \"fields\": [{\"name\": \"Repo\", \"value\": \"${REPO_NAME}\", \"inline\": true}, {\"name\": \"User\", \"value\": \"${USER_NAME}\", \"inline\": true}, {\"name\": \"Branch\", \"value\": \"${BRANCH}\", \"inline\": true}, {\"name\": \"Environment\", \"value\": \"${ENVIRONMENT}\", \"inline\": true}, {\"name\": \"Commit\", \"value\": \"${SHORT_SHA}\", \"inline\": true}, {\"name\": \"Actions\", \"value\": \"[View Run](${RUN_URL})\", \"inline\": true}], \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}]}" \
             "$DISCORD_WEBHOOK_URL"
 
       - name: Notify Discord on failure
@@ -65,9 +66,10 @@ jobs:
           SHORT_SHA: ${{ github.sha }}
           FAILED_JOB: ${{ github.job }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           SHORT_SHA=${SHORT_SHA:0:7}
           curl -H "Content-Type: application/json" \
             -X POST \
-            -d "{\"content\": \"❌ **部署失敗！**\n- Repo: ${REPO_NAME}\n- User: ${USER_NAME}\n- Branch: ${BRANCH}\n- Environment: ${ENVIRONMENT}\n- Commit: ${SHORT_SHA}\n- 失敗 Job: ${FAILED_JOB}\n請盡快檢查。\"}" \
+            -d "{\"embeds\": [{\"title\": \"❌ Deploy Failed\", \"color\": 16711680, \"fields\": [{\"name\": \"Repo\", \"value\": \"${REPO_NAME}\", \"inline\": true}, {\"name\": \"User\", \"value\": \"${USER_NAME}\", \"inline\": true}, {\"name\": \"Branch\", \"value\": \"${BRANCH}\", \"inline\": true}, {\"name\": \"Environment\", \"value\": \"${ENVIRONMENT}\", \"inline\": true}, {\"name\": \"Commit\", \"value\": \"${SHORT_SHA}\", \"inline\": true}, {\"name\": \"Failed Job\", \"value\": \"${FAILED_JOB}\", \"inline\": true}, {\"name\": \"Actions\", \"value\": \"[View Run](${RUN_URL})\", \"inline\": true}], \"description\": \"Please check the logs for more details.\", \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}]}" \
             "$DISCORD_WEBHOOK_URL"
