@@ -49,11 +49,12 @@ jobs:
           SHORT_SHA: ${{ github.sha }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          USER_URL: ${{ github.server_url }}/${{ github.actor }}
         run: |
           SHORT_SHA=${SHORT_SHA:0:7}
           curl -H "Content-Type: application/json" \
             -X POST \
-            -d "{\"embeds\": [{\"title\": \"✅ Deploy Succeeded\", \"color\": 65280, \"fields\": [{\"name\": \"Repo\", \"value\": \"${REPO_NAME}\", \"inline\": true}, {\"name\": \"User\", \"value\": \"${USER_NAME}\", \"inline\": true}, {\"name\": \"Branch\", \"value\": \"${BRANCH}\", \"inline\": true}, {\"name\": \"Environment\", \"value\": \"${ENVIRONMENT}\", \"inline\": true}, {\"name\": \"Commit\", \"value\": \"${SHORT_SHA}\", \"inline\": true}, {\"name\": \"Actions\", \"value\": \"[View Run](${RUN_URL})\", \"inline\": true}], \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}]}" \
+            -d "{\"embeds\": [{\"title\": \"✅ Deploy Succeeded\", \"color\": 65280, \"author\": {\"name\": \"by ${USER_NAME}\", \"url\": \"${USER_URL}\"}, \"fields\": [{\"name\": \"Repo\", \"value\": \"${REPO_NAME}\", \"inline\": true}, {\"name\": \"Branch\", \"value\": \"${BRANCH}\", \"inline\": true}, {\"name\": \"Environment\", \"value\": \"${ENVIRONMENT}\", \"inline\": true}, {\"name\": \"Commit\", \"value\": \"${SHORT_SHA}\", \"inline\": true}], \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}], \"content\": \"[View Run](${RUN_URL})\"}" \
             "$DISCORD_WEBHOOK_URL"
 
       - name: Notify Discord on failure
@@ -67,9 +68,10 @@ jobs:
           FAILED_JOB: ${{ github.job }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          USER_URL: ${{ github.server_url }}/${{ github.actor }}
         run: |
           SHORT_SHA=${SHORT_SHA:0:7}
           curl -H "Content-Type: application/json" \
             -X POST \
-            -d "{\"embeds\": [{\"title\": \"❌ Deploy Failed\", \"color\": 16711680, \"fields\": [{\"name\": \"Repo\", \"value\": \"${REPO_NAME}\", \"inline\": true}, {\"name\": \"User\", \"value\": \"${USER_NAME}\", \"inline\": true}, {\"name\": \"Branch\", \"value\": \"${BRANCH}\", \"inline\": true}, {\"name\": \"Environment\", \"value\": \"${ENVIRONMENT}\", \"inline\": true}, {\"name\": \"Commit\", \"value\": \"${SHORT_SHA}\", \"inline\": true}, {\"name\": \"Failed Job\", \"value\": \"${FAILED_JOB}\", \"inline\": true}, {\"name\": \"Actions\", \"value\": \"[View Run](${RUN_URL})\", \"inline\": true}], \"description\": \"Please check the logs for more details.\", \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}]}" \
+            -d "{\"embeds\": [{\"title\": \"❌ Deploy Failed\", \"color\": 16711680, \"author\": {\"name\": \"by ${USER_NAME}\", \"url\": \"${USER_URL}\"}, \"fields\": [{\"name\": \"Repo\", \"value\": \"${REPO_NAME}\", \"inline\": true}, {\"name\": \"Branch\", \"value\": \"${BRANCH}\", \"inline\": true}, {\"name\": \"Environment\", \"value\": \"${ENVIRONMENT}\", \"inline\": true}, {\"name\": \"Commit\", \"value\": \"${SHORT_SHA}\", \"inline\": true}, {\"name\": \"Failed Job\", \"value\": \"${FAILED_JOB}\", \"inline\": true}], \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}], \"content\": \"[View Run](${RUN_URL})\"}" \
             "$DISCORD_WEBHOOK_URL"
