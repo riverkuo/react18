@@ -47,7 +47,7 @@ jobs:
           USER_NAME="${{ github.actor }}"
           BRANCH="${{ github.ref_name }}"
           ENVIRONMENT="${{ github.event.deployment.environment || 'unknown' }}"
-          SHORT_SHA="${{ github.sha::7 }}"
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
           curl -H "Content-Type: application/json" \
             -X POST \
             -d "{\"content\": \"✅ **部署成功！**\n- Repo: ${REPO_NAME}\n- User: ${USER_NAME}\n- Branch: ${BRANCH}\n- Environment: ${ENVIRONMENT}\n- Commit: ${SHORT_SHA}\"}" \
@@ -61,7 +61,7 @@ jobs:
           USER_NAME="${{ github.actor }}"
           BRANCH="${{ github.ref_name }}"
           ENVIRONMENT="${{ github.event.deployment.environment || 'unknown' }}"
-          SHORT_SHA="${{ github.sha::7 }}"
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
 
           # 取得失敗的 job 名稱（本 job 名稱）
           FAILED_JOB="${{ github.job }}"
