@@ -58,11 +58,11 @@ jobs:
           if [ "${{ job.status }}" = "success" ]; then
             curl -H "Content-Type: application/json" \
               -X POST \
-              -d "{\"embeds\": [{\"title\": \"✅ Deploy Succeeded\", \"color\": 65280, \"author\": {\"name\": \"by ${USER_NAME}\", \"url\": \"${USER_URL}\"}, \"description\": \"[View Run](${RUN_URL})\n\n| Repo | Branch | Environment | Commit |\n|------|--------|------------|--------|\n| [${REPO_NAME}](${REPO_URL}) | ${BRANCH} | ${ENVIRONMENT} | [${SHORT_SHA}](${COMMIT_URL}) |\", \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}]}" \
+              -d "{\"embeds\": [{\"title\": \"✅ Deploy Succeeded\", \"color\": 65280, \"author\": {\"name\": \"by ${USER_NAME}\", \"url\": \"${USER_URL}\"}, "description\": \"• [Click to view](${RUN_URL})\\n• Deployed ${BRANCH} on ${ENVIRONMENT}\", \"fields\": [{\"name\": \"Repository\", \"value\": \"[${REPO_NAME}](${REPO_URL})\", \"inline\": true}, {\"name\": \"Commit\", \"value\": \"[${SHORT_SHA}](${COMMIT_URL})\", \"inline\": true}], \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}]}" \
               "$DISCORD_WEBHOOK_URL"
           else
             curl -H "Content-Type: application/json" \
               -X POST \
-              -d "{\"embeds\": [{\"title\": \"❌ Deploy Failed\", \"color\": 16711680, \"author\": {\"name\": \"by ${USER_NAME}\", \"url\": \"${USER_URL}\"}, \"description\": \"[View Run](${RUN_URL})\n\n| Repo | Branch | Environment | Commit | Failed Job |\n|------|--------|------------|--------|------------|\n| [${REPO_NAME}](${REPO_URL}) | ${BRANCH} | ${ENVIRONMENT} | [${SHORT_SHA}](${COMMIT_URL}) | ${FAILED_JOB} |\", \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}]}" \
+              -d "{\"embeds\": [{\"title\": \"❌ Deploy Failed\", \"color\": 16711680, \"author\": {\"name\": \"by ${USER_NAME}\", \"url\": \"${USER_URL}\"}, "description\": \"• [Click to view](${RUN_URL})\\n• Deployed ${BRANCH} on ${ENVIRONMENT}\", \"fields\": [{\"name\": \"Repository\", \"value\": \"[${REPO_NAME}](${REPO_URL})\", \"inline\": true}, {\"name\": \"Commit\", \"value\": \"[${SHORT_SHA}](${COMMIT_URL})\", \"inline\": true}, {\"name\": \"Failed Job\", \"value\": \"${FAILED_JOB}\", \"inline\": true}], \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}]}" \
               "$DISCORD_WEBHOOK_URL"
           fi
