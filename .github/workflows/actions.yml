@@ -39,26 +39,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script:  sudo nginx -t && sudo systemctl reload nginx
 
-      - name: Notify Discord on success
-        if: success()
-        env:
-          REPO_NAME: ${{ github.event.repository.name }}
-          USER_NAME: ${{ github.actor }}
-          BRANCH: ${{ github.ref_name }}
-          ENVIRONMENT: ${{ github.event.deployment.environment || 'unknown' }}
-          SHORT_SHA: ${{ github.sha }}
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          USER_URL: ${{ github.server_url }}/${{ github.actor }}
-        run: |
-          SHORT_SHA=${SHORT_SHA:0:7}
-          curl -H "Content-Type: application/json" \
-            -X POST \
-            -d "{\"embeds\": [{\"title\": \"✅ Deploy Succeeded\", \"color\": 65280, \"author\": {\"name\": \"by ${USER_NAME}\", \"url\": \"${USER_URL}\"}, \"fields\": [{\"name\": \"Repo\", \"value\": \"${REPO_NAME}\", \"inline\": true}, {\"name\": \"Branch\", \"value\": \"${BRANCH}\", \"inline\": true}, {\"name\": \"Environment\", \"value\": \"${ENVIRONMENT}\", \"inline\": true}, {\"name\": \"Commit\", \"value\": \"${SHORT_SHA}\", \"inline\": true}], \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}], \"content\": \"[View Run](${RUN_URL})\"}" \
-            "$DISCORD_WEBHOOK_URL"
-
-      - name: Notify Discord on failure
-        if: failure()
+      - name: Notify Discord
+        if: always()
         env:
           REPO_NAME: ${{ github.event.repository.name }}
           USER_NAME: ${{ github.actor }}
@@ -69,9 +51,18 @@ jobs:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           USER_URL: ${{ github.server_url }}/${{ github.actor }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+          COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
         run: |
           SHORT_SHA=${SHORT_SHA:0:7}
-          curl -H "Content-Type: application/json" \
-            -X POST \
-            -d "{\"embeds\": [{\"title\": \"❌ Deploy Failed\", \"color\": 16711680, \"author\": {\"name\": \"by ${USER_NAME}\", \"url\": \"${USER_URL}\"}, \"fields\": [{\"name\": \"Repo\", \"value\": \"${REPO_NAME}\", \"inline\": true}, {\"name\": \"Branch\", \"value\": \"${BRANCH}\", \"inline\": true}, {\"name\": \"Environment\", \"value\": \"${ENVIRONMENT}\", \"inline\": true}, {\"name\": \"Commit\", \"value\": \"${SHORT_SHA}\", \"inline\": true}, {\"name\": \"Failed Job\", \"value\": \"${FAILED_JOB}\", \"inline\": true}], \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}], \"content\": \"[View Run](${RUN_URL})\"}" \
-            "$DISCORD_WEBHOOK_URL"
+          if [ "${{ job.status }}" = "success" ]; then
+            curl -H "Content-Type: application/json" \
+              -X POST \
+              -d "{\"embeds\": [{\"title\": \"✅ Deploy Succeeded\", \"color\": 65280, \"author\": {\"name\": \"by ${USER_NAME}\", \"url\": \"${USER_URL}\"}, \"description\": \"[View Run](${RUN_URL})\", \"fields\": [{\"name\": \"Repo\", \"value\": \"[${REPO_NAME}](${REPO_URL})\", \"inline\": false}, {\"name\": \"Branch\", \"value\": \"${BRANCH}\", \"inline\": false}, {\"name\": \"Environment\", \"value\": \"${ENVIRONMENT}\", \"inline\": false}, {\"name\": \"Commit\", \"value\": \"[${SHORT_SHA}](${COMMIT_URL})\", \"inline\": false}], \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}]}" \
+              "$DISCORD_WEBHOOK_URL"
+          else
+            curl -H "Content-Type: application/json" \
+              -X POST \
+              -d "{\"embeds\": [{\"title\": \"❌ Deploy Failed\", \"color\": 16711680, \"author\": {\"name\": \"by ${USER_NAME}\", \"url\": \"${USER_URL}\"}, \"description\": \"[View Run](${RUN_URL})\", \"fields\": [{\"name\": \"Repo\", \"value\": \"[${REPO_NAME}](${REPO_URL})\", \"inline\": false}, {\"name\": \"Branch\", \"value\": \"${BRANCH}\", \"inline\": false}, {\"name\": \"Environment\", \"value\": \"${ENVIRONMENT}\", \"inline\": false}, {\"name\": \"Commit\", \"value\": \"[${SHORT_SHA}](${COMMIT_URL})\", \"inline\": false}, {\"name\": \"Failed Job\", \"value\": \"${FAILED_JOB}\", \"inline\": false}], \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}]}" \
+              "$DISCORD_WEBHOOK_URL"
+          fi
