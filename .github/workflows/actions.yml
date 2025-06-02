@@ -58,11 +58,11 @@ jobs:
           if [ "${{ job.status }}" = "success" ]; then
             curl -H "Content-Type: application/json" \
               -X POST \
-              -d "{\"embeds\": [{\"title\": \"✅ Deploy Succeeded\", \"color\": 65280, \"author\": {\"name\": \"by ${USER_NAME}\", \"url\": \"${USER_URL}\"}, \"description\": \"[View Run](${RUN_URL})\", \"fields\": [{\"name\": \"Repo\", \"value\": \"[${REPO_NAME}](${REPO_URL})\", \"inline\": false}, {\"name\": \"Branch\", \"value\": \"${BRANCH}\", \"inline\": false}, {\"name\": \"Environment\", \"value\": \"${ENVIRONMENT}\", \"inline\": false}, {\"name\": \"Commit\", \"value\": \"[${SHORT_SHA}](${COMMIT_URL})\", \"inline\": false}], \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}]}" \
+              -d "{\"embeds\": [{\"title\": \"✅ Deploy Succeeded\", \"color\": 65280, \"author\": {\"name\": \"by ${USER_NAME}\", \"url\": \"${USER_URL}\"}, \"description\": \"[View Run](${RUN_URL})\n\n| Repo | Branch | Environment | Commit |\n|------|--------|------------|--------|\n| [${REPO_NAME}](${REPO_URL}) | ${BRANCH} | ${ENVIRONMENT} | [${SHORT_SHA}](${COMMIT_URL}) |\", \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}]}" \
               "$DISCORD_WEBHOOK_URL"
           else
             curl -H "Content-Type: application/json" \
               -X POST \
-              -d "{\"embeds\": [{\"title\": \"❌ Deploy Failed\", \"color\": 16711680, \"author\": {\"name\": \"by ${USER_NAME}\", \"url\": \"${USER_URL}\"}, \"description\": \"[View Run](${RUN_URL})\", \"fields\": [{\"name\": \"Repo\", \"value\": \"[${REPO_NAME}](${REPO_URL})\", \"inline\": false}, {\"name\": \"Branch\", \"value\": \"${BRANCH}\", \"inline\": false}, {\"name\": \"Environment\", \"value\": \"${ENVIRONMENT}\", \"inline\": false}, {\"name\": \"Commit\", \"value\": \"[${SHORT_SHA}](${COMMIT_URL})\", \"inline\": false}, {\"name\": \"Failed Job\", \"value\": \"${FAILED_JOB}\", \"inline\": false}], \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}]}" \
+              -d "{\"embeds\": [{\"title\": \"❌ Deploy Failed\", \"color\": 16711680, \"author\": {\"name\": \"by ${USER_NAME}\", \"url\": \"${USER_URL}\"}, \"description\": \"[View Run](${RUN_URL})\n\n| Repo | Branch | Environment | Commit | Failed Job |\n|------|--------|------------|--------|------------|\n| [${REPO_NAME}](${REPO_URL}) | ${BRANCH} | ${ENVIRONMENT} | [${SHORT_SHA}](${COMMIT_URL}) | ${FAILED_JOB} |\", \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}]}" \
               "$DISCORD_WEBHOOK_URL"
           fi
