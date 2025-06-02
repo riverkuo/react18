@@ -15,30 +15,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
-      - name: Create deployment
-        id: create_deployment
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "Creating deployment..."
-          response=$(curl -s -X POST \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/${{ github.repository }}/deployments \
-            -d @- <<EOF
-          {
-            "ref": "${{ github.sha }}",
-            "environment": "production",
-            "description": "Deploy triggered by GitHub Actions",
-            "auto_merge": false,
-            "required_contexts": []
-          }
-          EOF
-          )
-          echo "Response: $response"
-          deployment_id=$(echo "$response" | jq -r '.id')
-          echo "deployment_id=$deployment_id" >> $GITHUB_OUTPUT
 
       - name: Build app
         run: |
@@ -63,28 +39,34 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script:  sudo nginx -t && sudo systemctl reload nginx
 
-      - name: Update deployment status to success
+       # 成功時通知 Discord
+      - name: Notify Discord on success
         if: success()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEPLOYMENT_ID: ${{ steps.create_deployment.outputs.deployment_id }}
         run: |
-          echo "Updating deployment status to success..."
-          curl -s -X POST \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/${{ github.repository }}/deployments/$DEPLOYMENT_ID/statuses \
-            -d '{"state":"success","description":"Deployment succeeded"}'
+          REPO_NAME="${{ github.event.repository.name }}"
+          USER_NAME="${{ github.actor }}"
+          BRANCH="${{ github.ref_name }}"
+          ENVIRONMENT="${{ github.event.deployment.environment || 'unknown' }}"
+          SHORT_SHA="${{ github.sha::7 }}"
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\": \"✅ **部署成功！**\n- Repo: ${REPO_NAME}\n- User: ${USER_NAME}\n- Branch: ${BRANCH}\n- Environment: ${ENVIRONMENT}\n- Commit: ${SHORT_SHA}\"}" \
+            "$DISCORD_WEBHOOK_URL"
 
-      - name: Update deployment status to failure
+      # 失敗時通知 Discord
+      - name: Notify Discord on failure
         if: failure()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEPLOYMENT_ID: ${{ steps.create_deployment.outputs.deployment_id }}
         run: |
-          echo "Updating deployment status to failure..."
-          curl -s -X POST \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/${{ github.repository }}/deployments/$DEPLOYMENT_ID/statuses \
-            -d '{"state":"failure","description":"Deployment failed"}'
+          REPO_NAME="${{ github.event.repository.name }}"
+          USER_NAME="${{ github.actor }}"
+          BRANCH="${{ github.ref_name }}"
+          ENVIRONMENT="${{ github.event.deployment.environment || 'unknown' }}"
+          SHORT_SHA="${{ github.sha::7 }}"
+
+          # 取得失敗的 job 名稱（本 job 名稱）
+          FAILED_JOB="${{ github.job }}"
+
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\": \"❌ **部署失敗！**\n- Repo: ${REPO_NAME}\n- User: ${USER_NAME}\n- Branch: ${BRANCH}\n- Environment: ${ENVIRONMENT}\n- Commit: ${SHORT_SHA}\n- 失敗 Job: ${FAILED_JOB}\n請盡快檢查。\"}" \
+            "$DISCORD_WEBHOOK_URL"
