@@ -11,6 +11,30 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        
+      - name: Create deployment
+        id: create_deployment
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Creating deployment..."
+          response=$(curl -s -X POST \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/deployments \
+            -d @- <<EOF
+          {
+            "ref": "${{ github.sha }}",
+            "environment": "production",
+            "description": "Deploy triggered by GitHub Actions",
+            "auto_merge": false,
+            "required_contexts": []
+          }
+          EOF
+          )
+          echo "Response: $response"
+          deployment_id=$(echo "$response" | jq -r '.id')
+          echo "deployment_id=$deployment_id" >> $GITHUB_OUTPUT
 
       - name: Build app
         run: |
@@ -34,3 +58,29 @@ jobs:
           username: ${{ secrets.NGINX_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script:  sudo nginx -t && sudo systemctl reload nginx
+
+      - name: Update deployment status to success
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEPLOYMENT_ID: ${{ steps.create_deployment.outputs.deployment_id }}
+        run: |
+          echo "Updating deployment status to success..."
+          curl -s -X POST \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/deployments/$DEPLOYMENT_ID/statuses \
+            -d '{"state":"success","description":"Deployment succeeded"}'
+
+      - name: Update deployment status to failure
+        if: failure()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEPLOYMENT_ID: ${{ steps.create_deployment.outputs.deployment_id }}
+        run: |
+          echo "Updating deployment status to failure..."
+          curl -s -X POST \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/deployments/$DEPLOYMENT_ID/statuses \
+            -d '{"state":"failure","description":"Deployment failed"}'
