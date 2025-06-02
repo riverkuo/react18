@@ -46,7 +46,7 @@ jobs:
           USER_NAME: ${{ github.actor }}
           BRANCH: ${{ github.ref_name }}
           ENVIRONMENT: ${{ github.event.deployment.environment || 'unknown' }}
-          SHORT_SHA: ${{ GITHUB_SHA }}
+          SHORT_SHA: ${{ github.sha }}
           FAILED_JOB: ${{ github.job }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
