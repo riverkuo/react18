@@ -1,4 +1,5 @@
-name: Deploy
+name: Build and Deploy on Production
+
 
 on:
   push:
@@ -7,6 +8,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment: production
 
     steps:
       - name: Checkout code
