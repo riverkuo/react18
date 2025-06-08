@@ -38,7 +38,7 @@ jobs:
           script:  sudo nginx -t && sudo systemctl reload nginx
 
       - name: Notify Discord
-        uses: riverkuo/notify-discord-action@eeac861c91782628dd12b77cb52006c2fbba5e88
+        uses: riverkuo/notify-discord-action@v1.0.3
         if: always()
         with:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
