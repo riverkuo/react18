@@ -39,6 +39,7 @@ jobs:
 
       - name: Notify Discord
         uses: riverkuo/notify-discord-action@eeac861c91782628dd12b77cb52006c2fbba5e88
+        if: always()
         with:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
