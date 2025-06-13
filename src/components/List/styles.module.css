@@ -1,0 +1,23 @@
+.list-container {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-white);
+  border-radius: var(--border-radius);
+
+  .list-item {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    align-items: stretch;
+    height: 50px;
+    border-bottom: 1px solid var(--background-color);
+  }
+
+  .list-item-content {
+    flex-grow: 1;
+    border-radius: var(--border-radius);
+    padding: 10px;
+  }
+}

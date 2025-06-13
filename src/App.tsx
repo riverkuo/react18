@@ -1,5 +1,5 @@
 import './App.css';
-import { Home } from './layput/home';
+import { Home } from './layout/Home';
 import { QueryClientProvider } from './libs/store/query-client/provider';
 
 function App() {

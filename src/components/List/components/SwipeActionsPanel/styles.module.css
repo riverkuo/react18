@@ -1,0 +1,118 @@
+@keyframes showSwipeRight {
+  0% {
+    transform: translateX(-40%);
+    opacity: 0;
+    visibility: hidden;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+@keyframes closeSwipeRight {
+  0% {
+    transform: translateX(0);
+    aspect-ratio: 1/1;
+    width: auto;
+    opacity: 1;
+    visibility: hidden;
+  }
+  100% {
+    transform: translateX(-40%);
+    aspect-ratio: 1/1;
+    width: auto;
+    opacity: 0;
+    visibility: visible;
+  }
+}
+
+@keyframes showSwipeLeft {
+  0% {
+    transform: translateX(40%);
+    opacity: 0;
+    visibility: hidden;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+@keyframes closeSwipeLeft {
+  0% {
+    transform: translateX(0);
+    aspect-ratio: 1/1;
+    width: auto;
+    opacity: 1;
+    visibility: hidden;
+  }
+  100% {
+    transform: translateX(40%);
+    aspect-ratio: 1/1;
+    width: auto;
+    opacity: 0;
+    visibility: visible;
+  }
+}
+
+.swipe-actions-panel {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+
+  height: 100%;
+  align-items: stretch;
+
+  &.show {
+    .button {
+      visibility: visible;
+      aspect-ratio: 1/1;
+      width: auto;
+    }
+  }
+
+  &.right.show {
+    .button {
+      animation-name: showSwipeRight;
+      animation-duration: 0.4s;
+    }
+  }
+  &.left.show {
+    .button {
+      animation-name: showSwipeLeft;
+      animation-duration: 0.4s;
+    }
+  }
+
+  .button {
+    height: 100%;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 0;
+    visibility: hidden;
+
+    &.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &.right {
+    .button {
+      animation-name: closeSwipeRight;
+      animation-duration: 0.4s;
+    }
+  }
+
+  &.left {
+    .button {
+      animation-name: closeSwipeLeft;
+      animation-duration: 0.4s;
+    }
+  }
+}
