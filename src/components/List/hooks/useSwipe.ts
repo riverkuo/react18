@@ -35,7 +35,7 @@ export const useSwipe = ({ enabledSwipeLeft = false, enabledSwipeRight = false, 
 
     const offsetX = swipeStateXRef.current.endX - swipeStateXRef.current.startX;
 
-    if (offsetX > 5) {
+    if (offsetX > 0) {
       if (isSwipePanelOpen.left) {
         setIsSwipePanelOpen({ left: false, right: false });
       } else {
@@ -44,7 +44,7 @@ export const useSwipe = ({ enabledSwipeLeft = false, enabledSwipeRight = false, 
       swipeStateXRef.current.startX = 0;
       swipeStateXRef.current.endX = 0;
     }
-    if (offsetX < -5) {
+    if (offsetX < 0) {
       if (isSwipePanelOpen.right) {
         setIsSwipePanelOpen({ left: false, right: false });
       } else {
@@ -78,7 +78,7 @@ export const useSwipe = ({ enabledSwipeLeft = false, enabledSwipeRight = false, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSwipePanelOpen]);
 
-  return enabledSwipeLeft
+  return enabledSwipeLeft || enabledSwipeRight
     ? {
         handleTouchStart,
         handleTouchMove,
