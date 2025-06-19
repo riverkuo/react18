@@ -24,7 +24,7 @@ td {
 }
 
 td:last-of-type {
-  text-align: center;
+  /* text-align: center; */
 }
 
 tbody > tr:nth-of-type(even) {
@@ -32,7 +32,7 @@ tbody > tr:nth-of-type(even) {
 }
 
 tfoot th {
-  text-align: right;
+  /* text-align: right; */
 }
 
 tfoot td {

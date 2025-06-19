@@ -1,16 +1,12 @@
 .list-item {
-  position: relative;
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  align-items: stretch;
-  height: 50px;
-  border-bottom: 1px solid var(--background-color);
+  min-height: 50px;
+  overflow: hidden;
+  background-color: var(--color-white);
 }
 
 .list-item-content {
-  flex-grow: 1;
   border-radius: var(--border-radius);
+  min-height: inherit;
   padding: 10px;
 }

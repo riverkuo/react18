@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 
 export interface SwipeAction<T extends ObjectType> {
   disabled?: boolean;
-  label: string;
+  label?: string;
   icon?: ReactNode;
   background: string;
   color?: string;

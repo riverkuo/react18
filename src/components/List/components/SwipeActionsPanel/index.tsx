@@ -1,4 +1,3 @@
-import { forwardRef } from 'react';
 import { useListContext } from '../../context';
 import { ObjectType } from '../../types';
 import { SwipeAction } from '../SwipeAction';
@@ -11,22 +10,26 @@ interface SwipeActionsPanelProps {
   swipePosition: 'left' | 'right';
 }
 
-export const SwipeActionsPanel = forwardRef<HTMLDivElement, SwipeActionsPanelProps>(
-  ({ show, itemData, swipePosition }, ref) => {
-    const { swipeLeftActions, swipeRightActions } = useListContext();
+export const SwipeActionsPanel: React.FC<SwipeActionsPanelProps> = ({ show, itemData, swipePosition }) => {
+  const { swipeLeftActions, swipeRightActions } = useListContext();
 
-    return (
-      <div ref={ref} className={`${styles['swipe-actions-panel']} ${show ? styles.show : ''} ${styles[swipePosition]}`}>
-        {swipePosition === 'left' &&
-          swipeLeftActions?.(itemData)?.map((props, index) => (
+  return (
+    <>
+      {swipePosition === 'left' && (
+        <div className={`${styles['swipe-actions-panel']} ${styles.left} ${show ? styles.show : ''}`}>
+          {swipeLeftActions?.(itemData)?.map((props, index) => (
             <SwipeAction key={index} {...props} itemData={itemData} />
           ))}
+        </div>
+      )}
 
-        {swipePosition === 'right' &&
-          swipeRightActions?.(itemData)?.map((props, index) => (
+      {swipePosition === 'right' && (
+        <div className={`${styles['swipe-actions-panel']} ${styles.right} ${show ? styles.show : ''}`}>
+          {swipeRightActions?.(itemData)?.map((props, index) => (
             <SwipeAction key={index} {...props} itemData={itemData} />
           ))}
-      </div>
-    );
-  }
-);
+        </div>
+      )}
+    </>
+  );
+};
