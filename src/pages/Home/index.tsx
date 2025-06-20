@@ -34,7 +34,7 @@ const mockData: MockData[] = [
   { id: 24, name: 'Jill', age: 43 },
 ];
 
-export function Home() {
+const Home = () => {
   const getSwipeLeftActions = (item: MockData) => [
     {
       icon: <EditIcon />,
@@ -72,4 +72,6 @@ export function Home() {
       swipeRightActions={getSwipeRightActions}
     />
   );
-}
+};
+
+export default Home;
