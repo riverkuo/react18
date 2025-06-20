@@ -1,6 +1,5 @@
 name: Build and Deploy on Production
 
-
 on:
   push:
     branches: [main]
@@ -15,6 +14,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build app
+        env:
+          REACT_APP_SERVER_BASE_URL: ${{ secrets.REACT_APP_SERVER_BASE_URL }}
+          REACT_APP_SERVER_API_KEY: ${{ secrets.REACT_APP_SERVER_API_KEY }}
         run: |
           npm install
           npm run build
@@ -25,9 +27,9 @@ jobs:
           host: ${{ secrets.NGINX_HOST }}
           username: ${{ secrets.NGINX_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "dist/**"
-          target: "/var/www/html/riverdevv.com/test-react-app"
-          strip_components: 1 
+          source: 'dist/**'
+          target: '/var/www/html/riverdevv.com/test-react-app'
+          strip_components: 1
 
       - name: Reload Nginx
         uses: appleboy/ssh-action@v1.2.2
@@ -35,14 +37,10 @@ jobs:
           host: ${{ secrets.NGINX_HOST }}
           username: ${{ secrets.NGINX_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script:  sudo nginx -t && sudo systemctl reload nginx
+          script: sudo nginx -t && sudo systemctl reload nginx
 
       - name: Notify Discord
         uses: riverkuo/notify-discord-action@v1.0.3
         if: always()
         with:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-
-
-
-          
