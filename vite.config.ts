@@ -6,8 +6,16 @@ import { defineConfig, loadEnv } from 'vite';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   return {
-    // app config
+    base: '/test-react-app',
     plugins: [react()],
+    server: {
+      proxy: {
+        '/mockServiceWorker.js': {
+          target: 'http://localhost:5174', // target is the vite dev server
+          rewrite: () => '/test-react-app/mockServiceWorker.js', // rewrite the path to the mockServiceWorker.js file
+        },
+      },
+    },
 
     define: {
       'process.env': env,
