@@ -1,7 +1,6 @@
 import './App.css';
-import { Home } from './layput/home';
-function App() {
-  return <Home />;
+function App({ children }: { children?: React.ReactNode }) {
+  return children;
 }
 
 export default App;
