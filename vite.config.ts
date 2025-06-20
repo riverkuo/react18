@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         '/mockServiceWorker.js': {
-          target: 'http://localhost:5174', // target is the vite dev server
+          target: 'http://localhost:*', // target is the vite dev server
           rewrite: () => '/test-react-app/mockServiceWorker.js', // rewrite the path to the mockServiceWorker.js file
         },
       },
