@@ -1,5 +1,7 @@
 import { DeleteIcon, EditIcon, InfoIcon } from '@/components/base/icons';
 import { List } from '@/components/List';
+import { useRef } from 'react';
+import styles from './styles.module.css';
 
 interface MockData {
   id: number;
@@ -35,33 +37,46 @@ const mockData: MockData[] = [
 ];
 
 const Home = () => {
-  const getSwipeLeftActions = (item: MockData) => [
-    {
-      icon: <EditIcon />,
-      background: '#6d9ce8',
-      color: 'var(--color-white)',
-      onClick: () => {
-        alert(`edit ${item.name}`);
+  const listContainerRef = useRef<HTMLDivElement>(null);
+  function getSwipeLeftActions(item: MockData) {
+    return [
+      {
+        icon: <EditIcon />,
+        background: '#6d9ce8',
+        color: 'var(--color-white)',
+        onClick: () => {
+          alert(`edit ${item.name}`);
+        },
       },
-    },
-    {
-      icon: <DeleteIcon />,
-      background: '#CA7373',
-      onClick: () => {
-        alert(`delete ${item.name}`);
+      {
+        icon: <DeleteIcon />,
+        background: '#CA7373',
+        onClick: () => {
+          alert(`delete ${item.name}`);
+        },
       },
-    },
-  ];
+    ];
+  }
 
-  const getSwipeRightActions = (item: MockData) => [
-    {
-      icon: <InfoIcon />,
-      background: '#6fcf64',
-      onClick: () => {
-        alert(`info ${item.name}`);
+  function getSwipeRightActions(item: MockData) {
+    return [
+      {
+        icon: <InfoIcon />,
+        background: '#6fcf64',
+        onClick: () => {
+          alert(`info ${item.name}`);
+        },
       },
-    },
-  ];
+    ];
+  }
+
+  async function onReachEnd() {
+    return new Promise((res) => {
+      setTimeout(() => {
+        res('get List');
+      }, 3000);
+    });
+  }
 
   return (
     <List
@@ -70,6 +85,8 @@ const Home = () => {
       renderItem={(item) => <div>{item.name}</div>}
       swipeLeftActions={getSwipeLeftActions}
       swipeRightActions={getSwipeRightActions}
+      onReachEnd={onReachEnd}
+      footerComponent={({ isEndIntersecting }) => (isEndIntersecting ? <div className={styles.loader} /> : null)}
     />
   );
 };
