@@ -12,3 +12,7 @@ export interface SwipeAction<T extends ObjectType> {
 export type SwipeActions<T extends ObjectType> = (item: T) => Array<SwipeAction<T>>;
 
 export type ObjectType = Record<string, any>;
+
+export type FooterComponent = ({ isEndIntersecting }: { isEndIntersecting: boolean }) => ReactNode;
+
+export type OnReachEnd = () => Promise<unknown>;

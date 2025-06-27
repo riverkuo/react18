@@ -1,16 +1,17 @@
-import { memo, ReactNode, useRef } from 'react';
+import React, { memo, useRef } from 'react';
 import { useListContext } from '../../context';
-import { ObjectType } from '../../types';
 import { useSwipe } from '../../hooks/useSwipe';
+import { ObjectType } from '../../types';
 import { SwipeActionsPanel } from '../SwipeActionsPanel';
 import styles from './styles.module.css';
 
-interface ListItemProps {
-  itemValue: ObjectType;
+interface ListItemProps<T extends ObjectType> {
+  itemValue: T;
   index: number;
-  children: ReactNode;
+  children: React.ReactNode;
 }
-export const ListItem: React.FC<ListItemProps> = memo(({ itemValue, index, children }) => {
+
+export const ListItem = memo(<T extends ObjectType>({ itemValue, index, children }: ListItemProps<T>) => {
   const { swipeLeftActions, swipeRightActions } = useListContext();
 
   const swipeWrapperRef = useRef<HTMLDivElement>(null);
@@ -57,3 +58,5 @@ export const ListItem: React.FC<ListItemProps> = memo(({ itemValue, index, child
     </div>
   );
 });
+
+ListItem.displayName = 'ListItem';
