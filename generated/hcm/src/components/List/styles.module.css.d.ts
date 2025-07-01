@@ -1,5 +1,0 @@
-declare const styles:
-  & Readonly<{ "list-container": string }>
-;
-export default styles;
-//# sourceMappingURL=./styles.module.css.d.ts.map
