@@ -1,10 +1,10 @@
-.list-container {
-  display: flex;
-  flex-direction: column;
+.list-container-outer {
   border-radius: var(--border-radius);
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  height: 100%;
   overflow: scroll;
+}
+
+.list-item {
+  width: 100%;
+  background-color: var(--color-white);
+  position: absolute;
 }

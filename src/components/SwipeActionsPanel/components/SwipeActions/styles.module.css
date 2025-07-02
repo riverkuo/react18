@@ -1,5 +1,5 @@
-.swipe-actions-panel {
-  min-height: inherit;
+.swipe-actions {
+  height: 100%;
   position: absolute;
   top: 0;
   display: inline-flex;

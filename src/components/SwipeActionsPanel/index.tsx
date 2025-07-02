@@ -1,62 +1,71 @@
-import React, { memo, useRef } from 'react';
-import { useListContext } from '../../context';
-import { useSwipe } from '../../hooks/useSwipe';
-import { ObjectType } from '../../types';
-import { SwipeActionsPanel } from '../SwipeActionsPanel';
+import { memo, useMemo, useRef } from 'react';
+import { SwipeActions } from './components/SwipeActions';
+import { useSwipe } from './hooks/useSwipe';
+import { SwipeActionsType } from './types';
 import styles from './styles.module.css';
 
-interface ListItemProps<T extends ObjectType> {
+interface SwipeActionPanelProps<T extends ObjectType> {
+  swipeLeftActions?: SwipeActionsType<T>;
+  swipeRightActions?: SwipeActionsType<T>;
   itemValue: T;
   index: number;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
-export const ListItem = memo(<T extends ObjectType>({ itemValue, index, children }: ListItemProps<T>) => {
-  const { swipeLeftActions, swipeRightActions } = useListContext();
-
+const SwipeActionsPanelComponent = <T extends ObjectType>({
+  swipeLeftActions,
+  swipeRightActions,
+  itemValue,
+  index,
+  children,
+}: SwipeActionPanelProps<T>) => {
   const swipeWrapperRef = useRef<HTMLDivElement>(null);
   const swipeMethods = useSwipe({
     enabledSwipeLeft: !!swipeLeftActions,
     enabledSwipeRight: !!swipeRightActions,
     wrapperRef: swipeWrapperRef,
   });
+  const stableChildren = useMemo(() => children, []);
 
   return (
     <div
-      className={styles['list-item']}
+      className={styles['item']}
       onTouchStart={swipeMethods.handleTouchStart}
       onTouchMove={swipeMethods.handleTouchMove}
       onTouchEnd={swipeMethods.handleTouchEnd}
       ref={swipeWrapperRef}
     >
       {!!swipeRightActions && (
-        <SwipeActionsPanel
+        <SwipeActions
           show={swipeMethods.isSwipePanelOpen?.right ?? false}
           itemData={itemValue}
           index={index}
           swipePosition="right"
+          swipeActions={swipeRightActions}
         />
       )}
 
       <div
-        className={styles['list-item-content']}
         onClickCapture={(e) => {
           swipeMethods.preventOutsideClickHandler?.(e);
         }}
       >
-        {children}
+        {stableChildren}
       </div>
 
       {!!swipeLeftActions && (
-        <SwipeActionsPanel
+        <SwipeActions
           show={swipeMethods.isSwipePanelOpen?.left ?? false}
           itemData={itemValue}
           index={index}
           swipePosition="left"
+          swipeActions={swipeLeftActions}
         />
       )}
     </div>
   );
-});
+};
 
-ListItem.displayName = 'ListItem';
+SwipeActionsPanelComponent.displayName = 'SwipeActionsPanel';
+
+export const SwipeActionsPanel = memo(SwipeActionsPanelComponent) as typeof SwipeActionsPanelComponent;

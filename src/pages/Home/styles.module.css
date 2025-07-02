@@ -8,6 +8,12 @@
   margin: 20px auto;
 }
 
+.list-item-content {
+  border-radius: var(--border-radius);
+  height: 100%;
+  padding: 10px;
+}
+
 @keyframes l44 {
   0%,
   5% {

@@ -1,55 +1,110 @@
-import { useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { ListFooter } from './components/ListFooter';
-import { ListItem } from './components/ListItem';
-import { ListContext, ListContextType } from './context';
+import { useVirtualized } from './hooks/useVirtualized';
 import styles from './styles.module.css';
-import { FooterComponent, ObjectType, OnReachEnd, SwipeActions } from './types';
+import { FooterComponent, OnReachEnd } from './types';
 
-interface ListProps<T extends ObjectType> {
+interface BaseListProps<T extends ObjectType> {
   data: Array<T>;
   keyExtractor: (item: T, index?: number) => string;
-  renderItem: (item: T, index?: number) => React.ReactNode;
-  swipeLeftActions?: SwipeActions<T>;
-  swipeRightActions?: SwipeActions<T>;
+  renderItem: (item: T, index: number) => React.ReactElement;
   onReachEnd?: OnReachEnd;
   footerComponent?: FooterComponent;
+  listHeight?: number;
+  itemHeight?: number;
+  gap?: number;
 }
 
-export const List = <T extends ObjectType>({
+interface ListProps<T extends ObjectType> extends BaseListProps<T> {
+  buffer?: never;
+  virtualize?: never;
+}
+
+interface VirtualizedListProps<T extends ObjectType> extends BaseListProps<T> {
+  virtualize: boolean;
+  buffer?: number;
+}
+
+type ListComponentProps<T extends ObjectType> = ListProps<T> | VirtualizedListProps<T>;
+
+const ListComponent = <T extends ObjectType>({
   data,
   renderItem,
   keyExtractor,
-  swipeLeftActions,
-  swipeRightActions,
   onReachEnd,
   footerComponent,
-}: ListProps<T>) => {
+  listHeight = 500,
+  itemHeight = 50,
+  gap = 0,
+  buffer,
+  virtualize,
+}: ListComponentProps<T>) => {
+  const itemHeightWithGap = itemHeight + gap;
+
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const keyList = data.map((item) => ({
-    key: keyExtractor(item),
-    value: item,
-  }));
-
-  const memoContextValue: ListContextType<T> = useMemo(
-    () => ({
-      swipeLeftActions,
-      swipeRightActions,
-    }),
-    [swipeLeftActions, swipeRightActions]
+  const keyList = useMemo(
+    () =>
+      data.map((item) => ({
+        key: keyExtractor(item),
+        value: item,
+      })),
+    [data, keyExtractor]
   );
 
-  return (
-    <div className={styles['list-container']} ref={containerRef}>
-      <ListContext.Provider value={memoContextValue}>
-        {keyList.map(({ key, value }, index) => (
-          <ListItem itemValue={value} index={index} key={key}>
-            {renderItem(value, index)}
-          </ListItem>
-        ))}
-      </ListContext.Provider>
+  const renderListItem = useCallback(
+    (item: { key: string; value: T }, i: number) => {
+      return (
+        <div
+          key={item.key}
+          className={styles['list-item']}
+          style={{
+            top: i * itemHeightWithGap,
+            height: itemHeight,
+          }}
+        >
+          {renderItem(item.value, i)}
+        </div>
+      );
+    },
+    [itemHeightWithGap, itemHeight, renderItem]
+  );
 
+  const { virtualizedList, updateVirtualizedList, virtualizedInnerHeight } = useVirtualized({
+    itemHeightWithGap,
+    listHeight,
+    buffer: buffer ?? 1,
+    virtualize: virtualize ?? false,
+    keyList,
+    itemCount: data.length,
+    renderListItem,
+    gap,
+  });
+
+  const innerHeight = virtualize ? virtualizedInnerHeight : keyList.length * itemHeightWithGap;
+
+  function onScroll(e: React.UIEvent<HTMLDivElement>) {
+    if (virtualize) updateVirtualizedList(e.currentTarget);
+  }
+
+  function renderList() {
+    if (virtualize) return virtualizedList;
+    return keyList.map((item, i) => renderListItem(item, i));
+  }
+
+  return (
+    <div
+      className={styles['list-container-outer']}
+      style={{ height: `${listHeight}px` }}
+      ref={containerRef}
+      onScroll={onScroll}
+    >
+      <div style={{ height: `${innerHeight}px` }}>{renderList()}</div>
       <ListFooter onReachEnd={onReachEnd} footerComponent={footerComponent} containerRef={containerRef} />
     </div>
   );
 };
+
+ListComponent.displayName = 'List';
+
+export const List = React.memo(ListComponent) as typeof ListComponent;

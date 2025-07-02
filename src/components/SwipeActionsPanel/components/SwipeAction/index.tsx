@@ -1,4 +1,4 @@
-import { ObjectType, SwipeAction as SwipeActionTypes } from '../../types';
+import { SwipeActionType as SwipeActionTypes } from '../../types';
 import styles from './styles.module.css';
 
 type SwipeActionProps = SwipeActionTypes<any> & {

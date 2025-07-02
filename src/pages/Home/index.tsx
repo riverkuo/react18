@@ -1,6 +1,8 @@
 import { DeleteIcon, EditIcon, InfoIcon } from '@/components/base/icons';
 import { List } from '@/components/List';
-import { useRef } from 'react';
+import { SwipeActionsPanel } from '@/components/SwipeActionsPanel';
+import { SwipeActionsType } from '@/components/SwipeActionsPanel/types';
+import { memo } from 'react';
 import styles from './styles.module.css';
 
 interface MockData {
@@ -34,10 +36,10 @@ const mockData: MockData[] = [
   { id: 22, name: 'Jill', age: 41 },
   { id: 23, name: 'Jack', age: 42 },
   { id: 24, name: 'Jill', age: 43 },
+  { id: 25, name: 'kk', age: 22 },
 ];
 
 const Home = () => {
-  const listContainerRef = useRef<HTMLDivElement>(null);
   function getSwipeLeftActions(item: MockData) {
     return [
       {
@@ -82,13 +84,48 @@ const Home = () => {
     <List
       data={mockData}
       keyExtractor={(item) => item.id.toString()}
-      renderItem={(item) => <div>{item.name}</div>}
-      swipeLeftActions={getSwipeLeftActions}
-      swipeRightActions={getSwipeRightActions}
+      renderItem={(item, index) => (
+        <RenderItem
+          item={item}
+          index={index}
+          swipeLeftActions={getSwipeLeftActions}
+          swipeRightActions={getSwipeRightActions}
+        />
+      )}
       onReachEnd={onReachEnd}
       footerComponent={({ isEndIntersecting }) => (isEndIntersecting ? <div className={styles.loader} /> : null)}
+      itemHeight={50}
+      listHeight={500}
+      gap={12}
+      // buffer={2}
+      // virtualize
     />
   );
 };
+
+const RenderItemComponent = ({
+  item,
+  index,
+  swipeLeftActions,
+  swipeRightActions,
+}: {
+  item: MockData;
+  index: number;
+  swipeLeftActions: SwipeActionsType<MockData>;
+  swipeRightActions: SwipeActionsType<MockData>;
+}) => {
+  return (
+    <SwipeActionsPanel
+      index={index}
+      itemValue={item}
+      swipeLeftActions={swipeLeftActions}
+      swipeRightActions={swipeRightActions}
+    >
+      <div className={styles['list-item-content']}>{item.name}</div>
+    </SwipeActionsPanel>
+  );
+};
+
+const RenderItem = memo(RenderItemComponent) as typeof RenderItemComponent;
 
 export default Home;
