@@ -1,10 +1,11 @@
-import { addFood, deleteFood, editFood, getFood } from '@/service/food';
+import { Table } from '@/components/Table';
+import { addFood, getFood } from '@/service/food';
 import { MutationKey, QueryKey } from '@/service/food/key';
-import { FoodItem, GetFoodItemRequest, GetFoodItemResponse } from '@/service/food/types';
+import { FoodItem, GetFoodItemRequest } from '@/service/food/types';
 import { useIsFetching, useIsMutating, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { CSSProperties, useRef, useState } from 'react';
-
-const containerStyle: CSSProperties = { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' };
+import { useRef } from 'react';
+import styles from './styles.module.css';
+import { getColumns } from './components/columns';
 
 function Supabase() {
   const queryClient = useQueryClient();
@@ -26,7 +27,7 @@ function Supabase() {
     },
   };
 
-  const { data: foodListData, isFetching: isFoodListFetching } = useQuery({
+  const { data: foodListData } = useQuery({
     queryKey: [QueryKey.FOOD, getFoodRequest],
     queryFn: getFood,
   });
@@ -50,9 +51,9 @@ function Supabase() {
   }
 
   return (
-    <div style={containerStyle}>
+    <div className={styles.container}>
       {/* Add */}
-      <div>
+      <div className={styles.actionBar}>
         <input id="add_food" placeholder="add.." ref={addFoodRef} disabled={disabled} />
         <button onClick={onAddFood} disabled={disabled}>
           Add
@@ -60,7 +61,7 @@ function Supabase() {
       </div>
 
       {/* Search field */}
-      <div>
+      <div className={styles.actionBar}>
         <input id="search_id" placeholder="id.." ref={searchIdRef} />
         <input id="search_name" placeholder="name.." ref={searchNameRef} disabled={disabled} />
         <button onClick={onSearchFood} disabled={disabled}>
@@ -69,97 +70,8 @@ function Supabase() {
       </div>
 
       {/* DataTable */}
-      {isFoodListFetching ? <div>loading...</div> : <DataTable foodListData={foodListData} />}
+      <Table<FoodItem> data={foodListData} columns={getColumns()} />
     </div>
-  );
-}
-
-function DataTable({ foodListData }: { foodListData: GetFoodItemResponse | null | undefined }) {
-  return foodListData ? (
-    <table>
-      <tbody>
-        <TableHeads />
-        {foodListData.map((food) => (
-          <TableRow food={food} key={food.id} />
-        ))}
-      </tbody>
-    </table>
-  ) : (
-    <>無資料</>
-  );
-}
-
-function TableHeads() {
-  return (
-    <tr>
-      <th>id</th>
-      <th>name</th>
-      <th>created_at</th>
-      <th>action</th>
-    </tr>
-  );
-}
-
-function TableRow({ food }: { food: FoodItem }) {
-  const queryClient = useQueryClient();
-
-  const editFoodRef = useRef<HTMLInputElement>(null);
-  const [editMode, toggleEditMode] = useState(false);
-
-  const isFetching = useIsFetching() > 0;
-  const isMutating = useIsMutating() > 0;
-  const disabled = isFetching || isMutating;
-
-  const deleteFoodMutation = useMutation({
-    mutationKey: [MutationKey.DELETE_FOOD],
-    mutationFn: deleteFood,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: [QueryKey.FOOD] });
-    },
-  });
-
-  const editFoodMutation = useMutation({
-    mutationKey: [MutationKey.EDIT_FOOD],
-    mutationFn: editFood,
-    onSuccess: async () => {
-      toggleEditMode(false);
-      await queryClient.invalidateQueries({ queryKey: [QueryKey.FOOD] });
-    },
-  });
-
-  function onDeleteFood() {
-    deleteFoodMutation.mutate({ id: { value: food.id, type: 'eq' } });
-  }
-
-  function onEdit() {
-    if (editMode) {
-      if (editFoodRef.current?.value) {
-        editFoodMutation.mutate({
-          params: { id: { value: food.id, type: 'eq' } },
-          body: { name: editFoodRef.current.value },
-        });
-      }
-    } else {
-      toggleEditMode(true);
-    }
-  }
-
-  return (
-    <tr key={food.id}>
-      <td>{food.id}</td>
-      <td>
-        <input id={food.id} ref={editFoodRef} defaultValue={food.name} disabled={disabled || !editMode} />
-      </td>
-      <td>{food.created_at}</td>
-      <td>
-        <button disabled={disabled} onClick={onEdit}>
-          {editMode ? 'submit' : 'edit'}
-        </button>
-        <button disabled={disabled && editMode} onClick={onDeleteFood}>
-          delete
-        </button>
-      </td>
-    </tr>
   );
 }
 

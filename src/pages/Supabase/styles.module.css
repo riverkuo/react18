@@ -1,0 +1,13 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* justify-items: center; */
+  gap: 20px;
+}
+
+.actionBar {
+  display: flex;
+  gap: var(--gap);
+  width: 60%;
+}

@@ -96,16 +96,19 @@ textarea {
   background-color: var(--color-white);
 }
 
-/* focus 狀態時邊框變色 */
 input:focus,
 textarea:focus {
   border-color: var(--secondary);
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
-/* placeholder 文字樣式 */
 input::placeholder,
 textarea::placeholder {
   color: grey;
   font-style: italic;
+}
+
+.displayFlex {
+  display: flex;
+  gap: var(--gap);
 }
