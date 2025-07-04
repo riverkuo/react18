@@ -1,0 +1,10 @@
+.list-container-outer {
+  border-radius: var(--border-radius);
+  overflow: scroll;
+}
+
+.list-item {
+  width: 100%;
+  background-color: var(--color-white);
+  position: absolute;
+}

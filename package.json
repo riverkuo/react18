@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
+    "gen": "hcm -o generated/hcm 'src/**/*.module.css'",
     "create-branch": "node scripts/create-branch.mjs"
   },
   "dependencies": {
@@ -32,6 +33,7 @@
     "globals": "^15.15.0",
     "jsdom": "^26.0.0",
     "msw": "^2.7.3",
+    "happy-css-modules": "^4.0.0",
     "inquirer": "^12.6.1",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",
