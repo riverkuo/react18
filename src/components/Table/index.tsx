@@ -23,9 +23,13 @@ const TableComponent = <T extends ObjectType>({
       <tbody>
         <TableHeads columns={columns} />
         {!data ? (
-          <tr>{noDataText}</tr>
+          <tr>
+            <td>{noDataText}</td>
+          </tr>
         ) : isLoading ? (
-          <tr>loading...</tr>
+          <tr>
+            <td>loading...</td>
+          </tr>
         ) : (
           data.map((rowData, index) => (
             <TableRow rowData={rowData} key={getRowId?.(rowData) ?? index} columns={columns} />
