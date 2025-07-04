@@ -5,6 +5,7 @@ import App from './App.tsx';
 import { QueryClientProvider } from './libs/store/query-client/provider.tsx';
 import Home from './pages/Home/index.tsx';
 import ListPage from './pages/List/index.tsx';
+import Supabase from './pages/Supabase/index.tsx';
 
 const root = document.getElementById('root');
 ReactDOM.createRoot(root!).render(
@@ -15,6 +16,7 @@ ReactDOM.createRoot(root!).render(
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/list" element={<ListPage />} />
+            <Route path="/supabase" element={<Supabase />} />
             <Route path="/test" element={<h1>test</h1>} />
           </Routes>
         </BrowserRouter>
