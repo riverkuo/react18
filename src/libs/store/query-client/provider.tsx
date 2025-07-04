@@ -43,7 +43,9 @@ export const QueryClientProvider = ({ children }: { children: ReactNode }) => {
     await errorHandler({ error, query: undefined, mutation, variables });
   }
 
-  async function errorHandler({ error, query, mutation, variables }: ErrorHandlerParamTypes) {}
+  async function errorHandler({ error, query, mutation, variables }: ErrorHandlerParamTypes) {
+    alert(`error message: ${error.message} \n You can do something here ~~`);
+  }
 
   return <ReactQueryClientProvider client={queryClient}>{children}</ReactQueryClientProvider>;
 };
