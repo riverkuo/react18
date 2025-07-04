@@ -1,13 +1,13 @@
-import { Home } from '@/layout/home';
 import { QueryClientProvider } from '@/libs/store/query-client/provider';
+import Supabase from '@/pages/Supabase';
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, test } from 'vitest';
 
-describe('Home component', () => {
+describe('Supabase component', () => {
   test('should get data form api', async () => {
     render(
       <QueryClientProvider>
-        <Home />
+        <Supabase />
       </QueryClientProvider>
     );
     await waitFor(() => {

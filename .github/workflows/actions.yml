@@ -18,7 +18,7 @@ jobs:
           REACT_APP_SERVER_BASE_URL: ${{ secrets.REACT_APP_SERVER_BASE_URL }}
           REACT_APP_SERVER_API_KEY: ${{ secrets.REACT_APP_SERVER_API_KEY }}
         run: |
-          npm install
+          npm ci
           npm run build
 
       - name: Copy files to GCE VM
