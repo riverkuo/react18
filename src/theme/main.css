@@ -1,0 +1,13 @@
+:root {
+  --background-color: #f1efec;
+  --primary: #123458;
+  --primary-light: #2770be;
+  --primary-active: #3393f9;
+  --secondary: #030303;
+  --tertiary: #d4c9be;
+  --color-white: #fff;
+
+  --border-radius: 4px;
+
+  --font-text: 16px;
+}

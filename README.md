@@ -1,26 +1,16 @@
+# A React List with Built-in Infinite Scroll, Virtualization and SwipeActions
 
-## Getting Started
+## How to use
 
-First, run the development server:
+### List
 
-```bash
-npm run dev
-```
+### Infinite Scroll
 
+### Virtualization
 
-</br>
-</br>
+### SwipeActions
 
-## DOING
-- [ ] Replace axios with fetch
-- [ ] Row Level Security
-- [ ] accessToken / refreshToken
-- [ ] query(search / pagination)
-- [ ] dataType: object array(json / jsonB)
-- [ ] functions
-- [ ] file
-- [ ] notification
-- [ ] login / logout (third party)
+## Reference
 
-
-
+- [React Native Virtualized List](https://reactnative.dev/docs/virtualizedlist)
+- [Sharing State Between Components](https://react.dev/learn/sharing-state-between-components)

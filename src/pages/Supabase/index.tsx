@@ -6,7 +6,7 @@ import { CSSProperties, useRef, useState } from 'react';
 
 const containerStyle: CSSProperties = { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' };
 
-export function Home() {
+function Supabase() {
   const queryClient = useQueryClient();
 
   const isFetching = useIsFetching() > 0;
@@ -162,3 +162,5 @@ function TableRow({ food }: { food: FoodItem }) {
     </tr>
   );
 }
+
+export default Supabase;

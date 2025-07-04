@@ -1,0 +1,21 @@
+.swipe-action {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: inherit;
+  aspect-ratio: 1/1;
+  width: auto;
+
+  color: var(--color-white);
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .swipe-action-label {
+    margin: 0;
+  }
+}
