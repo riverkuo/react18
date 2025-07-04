@@ -1,7 +1,6 @@
 import { StrictMode } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import App from './App.tsx';
-import './index.css';
 import { QueryClientProvider } from './libs/store/query-client/provider.tsx';
 import Home from './pages/Home/index.tsx';
 import ReactDOM from 'react-dom/client';
