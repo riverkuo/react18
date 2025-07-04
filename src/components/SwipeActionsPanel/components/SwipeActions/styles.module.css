@@ -1,0 +1,26 @@
+.swipe-actions {
+  height: 100%;
+  position: absolute;
+  top: 0;
+  display: inline-flex;
+  z-index: 1;
+  transition: all 0.4s ease-in-out;
+
+  &.left {
+    right: 0;
+    transform: translateX(100%);
+  }
+
+  &.left.show {
+    transform: translateX(0);
+  }
+
+  &.right {
+    left: 0;
+    transform: translateX(-100%);
+  }
+
+  &.right.show {
+    transform: translateX(0);
+  }
+}
