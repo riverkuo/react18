@@ -19,6 +19,12 @@ export const mockFoodItemsResponse: BaseResponse<GetFoodItemResponse> = {
   status: BaseResponseStatus.SUCCESS,
 };
 
+// data: [],
+// code: 404,
+// error: true,
+// status: BaseResponseStatus.ERROR,
+// message: '有錯誤發生！！',
+
 export const mockAddFoodItemsResponse: BaseResponse<null> = {
   data: null,
   code: '',

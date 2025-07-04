@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from 'axios';
+import { AxiosError, AxiosRequestConfig } from 'axios';
 import { getAxios } from './axios';
 
 export enum BaseResponseStatus {
@@ -85,6 +85,9 @@ export async function fetcher(
 
     return baseResponseData;
   } catch (error) {
+    if (error instanceof AxiosError) {
+      throw new Error(error.response?.statusText); // this is debatable
+    }
     throw new Error('Unknown error');
   }
 }

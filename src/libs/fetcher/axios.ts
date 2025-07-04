@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const baseURL = process.env.REACT_APP_SERVER_BASE_URL;
+export const baseURL = process.env.REACT_APP_SERVER_BASE_URL;
+
 const apiKey = process.env.REACT_APP_SERVER_API_KEY;
 const axiosConfig = {
   baseURL,
