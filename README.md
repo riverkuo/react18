@@ -1,16 +1,53 @@
-# A React List with Built-in Infinite Scroll, Virtualization and SwipeActions
+# React18 Learning Project
 
-## How to use
+這是一個實驗性質的 React 18 學習專案，主要用於探索和實作各種前端技術。
 
-### List
+## 1. Virtualized List 實作
 
-### Infinite Scroll
+### 功能概述
 
-### Virtualization
+[造訪網頁](https://riverdevv.com/test-react-app/list)
 
-### SwipeActions
+List 頁面展示了一個高效能的虛擬化列表實作，能夠處理大量數據而不影響效能。每個列表項目都支援滑動手勢操作。
 
-## Reference
+### 技術棧
 
-- [React Native Virtualized List](https://reactnative.dev/docs/virtualizedlist)
-- [Sharing State Between Components](https://react.dev/learn/sharing-state-between-components)
+- **Intersection Observer API** - 實現無限滾動
+
+### 參數控制面板
+
+在開發模式下，你可以透過頁面左側的參數面板即時調整列表行為：
+
+#### virtualized (虛擬化開關)
+
+- **類型**: 布林值
+- **功能**: 控制是否啟用虛擬化渲染
+- **效果**:
+  - `true`: 只渲染可見項目，效能最佳
+  - `false`: 渲染所有項目，適合小量數據
+
+#### buffer (緩衝區大小)
+
+- **類型**: 數字 (0-5)
+- **功能**: 控制預渲染的項目數量
+- **效果**:
+  - `0`: 只渲染可見項目
+  - `1-5`: 預渲染額外項目，減少滾動時的空白
+
+### 使用方式
+
+1. 開啟瀏覽器開發者工具
+2. 調整參數面板中的設定
+3. 觀察列表的即時變化
+4. 測試滑動手勢和無限滾動功能
+
+### 效能優勢
+
+- 處理 10,000+ 項目時仍保持流暢
+- 記憶體使用量恆定
+- 滾動效能優化
+- 支援動態高度項目
+
+### TODO
+
+- [ ] Dynamic Height
