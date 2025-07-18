@@ -2,7 +2,7 @@ import { DeleteIcon, EditIcon, InfoIcon } from '@/components/base/icons';
 import { List } from '@/components/List';
 import { SwipeActionsPanel } from '@/components/SwipeActionsPanel';
 import { SwipeActionsType } from '@/components/SwipeActionsPanel/types';
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import styles from './styles.module.css';
 
 interface MockData {
@@ -40,6 +40,9 @@ const mockData: MockData[] = [
 ];
 
 const ListPage = () => {
+  const [virtualized, setVirtualized] = useState(true);
+  const [buffer, setBuffer] = useState(0);
+
   function getSwipeLeftActions(item: MockData) {
     return [
       {
@@ -81,25 +84,45 @@ const ListPage = () => {
   }
 
   return (
-    <List
-      data={mockData}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={(item, index) => (
-        <RenderItem
-          item={item}
-          index={index}
-          swipeLeftActions={getSwipeLeftActions}
-          swipeRightActions={getSwipeRightActions}
+    <main>
+      {/* 參數設定 */}
+      <aside>
+        <h4>Set parameters to see changes of the list in devTools</h4>
+        <div className={styles['params-container']}>
+          <label>virtualized</label>
+          <div>
+            <input type="checkbox" checked={virtualized} onChange={() => setVirtualized(!virtualized)} />
+          </div>
+
+          <label>buffer</label>
+          <div>
+            <input type="number" min={0} max={5} value={buffer} onChange={(e) => setBuffer(Number(e.target.value))} />
+          </div>
+        </div>
+      </aside>
+
+      <section className={styles['content']}>
+        <List
+          data={mockData}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={(item, index) => (
+            <RenderItem
+              item={item}
+              index={index}
+              swipeLeftActions={getSwipeLeftActions}
+              swipeRightActions={getSwipeRightActions}
+            />
+          )}
+          onReachEnd={onReachEnd}
+          footerComponent={({ isEndIntersecting }) => (isEndIntersecting ? <div className={styles.loader} /> : null)}
+          itemHeight={50}
+          listHeight={500}
+          gap={12}
+          buffer={buffer}
+          virtualize={virtualized}
         />
-      )}
-      onReachEnd={onReachEnd}
-      footerComponent={({ isEndIntersecting }) => (isEndIntersecting ? <div className={styles.loader} /> : null)}
-      itemHeight={50}
-      listHeight={500}
-      gap={12}
-      // buffer={2}
-      // virtualize
-    />
+      </section>
+    </main>
   );
 };
 

@@ -30,7 +30,7 @@ export const useVirtualized = <T extends ObjectType>({
 
     const tempList = [];
 
-    for (let i = startIndex + 1; i < endIndex; i++) {
+    for (let i = startIndex; i < endIndex; i++) {
       const item = keyList[i];
       tempList.push(renderListItem(item, i));
     }
