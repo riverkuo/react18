@@ -2,6 +2,11 @@
 
 這是一個實驗性質的 React 18 學習專案，主要用於探索和實作各種前端技術。
 
+- [x] Github Actions
+- [x] Notify deploy result to Discord
+- [x] Deploy on Nginx（GCP vm）
+
+
 ## 1. Virtualized List 實作
 
 ### 功能概述
